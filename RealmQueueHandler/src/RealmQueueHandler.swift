@@ -49,7 +49,7 @@ public class QueueHandler {
         })
     }
     
-    public func barrierReadTransaction(realmPath: String, callback: (realm: RLMRealm) -> (Bool)) {
+    public func barrierReadTransaction(realmPath: String, callback: (realm: RLMRealm) -> ()) {
         dispatch_barrier_async(self.queue, { () -> Void in
             let realm = self.createRealm(realmPath)
             callback(realm: realm)
