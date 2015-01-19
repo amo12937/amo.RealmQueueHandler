@@ -38,8 +38,8 @@ class RealmQueueHandlerTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
-    
-    func test_書き込みはwriteTransactionが呼ばれた順に行われる() {
+
+    func test_should_write_sequentially_in_the_order_of_calling_write_transaction() {
         let expectation = self.expectationWithDescription("test_concurrent")
         
         let key = 0
@@ -67,7 +67,7 @@ class RealmQueueHandlerTests: XCTestCase {
         self.waitForExpectationsWithTimeout(1, handler: { (error) -> Void in })
     }
     
-    func test_writeTransactionのパフォーマンステスト() {
+    func test_performance_of_write_transaction() {
         let key = 0
         var val = 0
         let getVal = { val++ }
@@ -98,7 +98,7 @@ class RealmQueueHandlerTests: XCTestCase {
         }
     }
     
-    func test_writeのあとに登録されたreadTransactionでは確実に書き換わっている() {
+    func test_should_be_overwritten_when_reading_after_writing() {
         let expectation = self.expectationWithDescription("test_writeのあとに登録されたreadTransactionでは確実に書き換わっている")
         let key = 0
         let val = 100
@@ -160,7 +160,7 @@ class RealmQueueHandlerTests: XCTestCase {
         self.waitForExpectationsWithTimeout(1, handler: { (error) -> Void in })
     }
     
-    func test_readTransactionのパフォーマンステスト() {
+    func test_performance_of_read_transaction() {
         let key = 0
         let val = 100
         let n = 100
