@@ -8,12 +8,30 @@
 
 import UIKit
 import XCTest
+import Realm
+import RealmQueueHandler
+
+class MockObject: RLMObject {
+    dynamic var key = 0
+    dynamic var val = 0
+    
+    override class func primaryKey() -> String! {
+        return "key"
+    }
+}
 
 class RealmQueueHandlerTests: XCTestCase {
+    var qh: QueueHandler!
+    let path = "user.realm"
     
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        qh = QueueHandler()
+        qh.writeTransaction(path, callback: { (realm) -> (Bool) in
+            realm.deleteAllObjects()
+            return true
+        })
     }
     
     override func tearDown() {
@@ -21,16 +39,31 @@ class RealmQueueHandlerTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        XCTAssert(true, "Pass")
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock() {
-            // Put the code you want to measure the time of here.
+    func test_書き込みはwriteTransactionが呼ばれた順に行われる() {
+        let expectation = self.expectationWithDescription("test_concurrent")
+        
+        let key = 0
+        let n = 100
+        
+        for i in 0..<n {
+            qh.writeTransaction(path) { (realm) -> (Bool) in
+                let old: MockObject! = MockObject(inRealm: realm, forPrimaryKey: key)
+                if (old != nil && old.val >= i) {
+                    XCTFail("expected old.val ( = \(old.val) ) to be always smaller than i ( = \(i))")
+                }
+                MockObject.createOrUpdateInRealm(realm, withObject: [
+                    "key": key,
+                    "val": i
+                    ])
+                return true
+            }
         }
+        
+        qh.writeTransaction(path) { (realm) -> (Bool) in
+            expectation.fulfill()
+            return true
+        }
+        
+        self.waitForExpectationsWithTimeout(1, handler: { (error) -> Void in })
     }
-    
 }
