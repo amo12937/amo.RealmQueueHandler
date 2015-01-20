@@ -75,8 +75,6 @@ class RealmQueueHandlerTests: XCTestCase {
         let semaphore = dispatch_semaphore_create(0)
         self.measureBlock { () -> Void in
             for i in 0..<n {
-                println("-------------- \(i) --------------")
-//                println("[              \(i)              ]")
                 self.qh.writeTransaction(self.path) { (realm) -> (Bool) in
                     MockObject.createOrUpdateInRealm(realm, withObject: [
                         "key": key,
@@ -91,7 +89,7 @@ class RealmQueueHandlerTests: XCTestCase {
                 return
             }
             
-            let result = dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, Int64(1 * NSEC_PER_SEC)))
+            let result = dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, Int64(10 * NSEC_PER_SEC)))
             if (result != 0) {
                 XCTFail("timeout expires.")
             }
@@ -163,7 +161,7 @@ class RealmQueueHandlerTests: XCTestCase {
     func test_performance_of_read_transaction() {
         let key = 0
         let val = 100
-        let n = 100
+        let n = 1000
         let semaphore = dispatch_semaphore_create(0)
         let time = dispatch_time(DISPATCH_TIME_NOW, Int64(1 * NSEC_PER_SEC))
         

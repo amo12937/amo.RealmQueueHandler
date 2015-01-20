@@ -14,7 +14,7 @@ public class QueueHandler {
     private let basePath: String
     
     public init(basePath: String? = nil, queue: dispatch_queue_t? = nil) {
-        self.queue = queue ?? dispatch_queue_create("amo.queue.realm_queue_hander", DISPATCH_QUEUE_SERIAL)
+        self.queue = queue ?? dispatch_queue_create("amo.queue.realm_queue_hander", DISPATCH_QUEUE_CONCURRENT)
         self.basePath = basePath ?? NSFileManager
             .defaultManager()
             .URLForDirectory(
