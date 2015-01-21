@@ -97,7 +97,7 @@ class RealmQueueHandlerTests: XCTestCase {
     }
     
     func test_should_be_overwritten_when_reading_after_writing() {
-        let expectation = self.expectationWithDescription("test_writeのあとに登録されたreadTransactionでは確実に書き換わっている")
+        let expectation = self.expectationWithDescription("test_should_be_overwritten_when_reading_after_writing")
         let key = 0
         let val = 100
         let anotherVal = 200
